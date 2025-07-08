@@ -30,9 +30,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/froala-editor/css/froala_editor.pkgd.min.css",
+              "node_modules/froala-editor/css/froala_style.min.css"
             ],
-            "scripts": [],
+            "scripts": ["node_modules/froala-editor/js/froala_editor.pkgd.min.js"],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {

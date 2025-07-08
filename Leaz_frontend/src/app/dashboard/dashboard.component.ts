@@ -1,12 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { ApiService, Document, Binder } from '../api.service'; // Import from the service
+import { ApiService, Document, Binder } from '../api.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -32,10 +33,10 @@ export class DashboardComponent implements OnInit {
     }).subscribe({
       next: (response) => {
         this.recentDocuments = response.documents
-          .sort((a, b) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime())
+          .sort((a: Document, b: Document) => new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime())
           .slice(0, 10);
         this.recentBinders = response.binders
-          .sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())
+          .sort((a: Binder, b: Binder) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())
           .slice(0, 10);
         this.isLoading = false;
       },

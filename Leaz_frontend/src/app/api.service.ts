@@ -33,7 +33,15 @@ export class ApiService {
     return this.http.get<Document[]>(this.documentsUrl);
   }
 
+  getDocumentById(id: number): Observable<Document> {
+    return this.http.get<Document>(`${this.documentsUrl}/${id}`);
+  }
+
   getBinders(): Observable<Binder[]> {
     return this.http.get<Binder[]>(this.bindersUrl);
+  }
+
+   updateDocument(id: number, document: Document): Observable<Document> {
+    return this.http.put<Document>(`${this.documentsUrl}/${id}`, document);
   }
 }

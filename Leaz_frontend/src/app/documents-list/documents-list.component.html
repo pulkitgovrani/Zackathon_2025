@@ -1,1 +1,25 @@
-<p>documents-list works!</p>
+<header class="mb-10">
+  <h2 class="text-4xl font-extrabold text-white">All Documents</h2>
+  <p class="text-gray-400">A complete list of all documents in the system.</p>
+</header>
+<div *ngIf="isLoading" class="text-center text-gray-400"><p>Loading documents...</p></div>
+<div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
+<div *ngIf="!isLoading && !error" class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+  <div class="space-y-3">
+    <a *ngFor="let doc of documents" [routerLink]="['/documents', doc.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
+      <div class="flex justify-between items-center">
+        <p class="font-semibold text-white">{{ doc.title }}</p>
+        <span class="px-2 py-1 text-xs font-semibold rounded-full"
+              [ngClass]="{
+                'bg-blue-900 text-blue-300': doc.status === 'Draft',
+                'bg-yellow-900 text-yellow-300': doc.status === 'In Review',
+                'bg-green-900 text-green-300': doc.status === 'Final',
+                'bg-gray-600 text-gray-300': doc.status === 'Archived'
+              }">
+          {{ doc.status }}
+        </span>
+      </div>
+      <p class="text-sm text-gray-400">Last Modified: {{ doc.lastModified | date:'medium' }}</p>
+    </a>
+    <div *ngIf="documents.length === 0" class="text-gray-500 text-center py-4">No documents found.</div>
+  </div>
