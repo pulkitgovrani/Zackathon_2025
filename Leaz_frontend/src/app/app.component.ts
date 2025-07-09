@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +10,10 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class AppComponent {
   title = 'Leaz';
+  private router = inject(Router);
 
-  // Placeholder for create document action
+  // Navigate to the create document page
   createDocument() {
-    console.log('Navigate to create document page...');
+    this.router.navigate(['/documents/new']);
   }
 }

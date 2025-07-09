@@ -1,17 +1,18 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService, Binder } from '../api.service';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-binders-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './binders-list.component.html',
   styleUrls: ['./binders-list.component.scss']
 })
 export class BindersListComponent implements OnInit {
   private apiService = inject(ApiService);
+  private router = inject(Router);
 
   binders: Binder[] = [];
   isLoading = true;
@@ -35,5 +36,9 @@ export class BindersListComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  createBinder() {
+    this.router.navigate(['/binders/new']);
   }
 }

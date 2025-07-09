@@ -1,0 +1,26 @@
+<header class="mb-10">
+  <h2 class="text-4xl font-extrabold text-white">Create New Document</h2>
+  <p class="text-gray-400">Fill out the details below to start a new document.</p>
+</header>
+<div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 max-w-2xl mx-auto">
+  <form [formGroup]="documentForm" (ngSubmit)="onSubmit()">
+    <div class="mb-6">
+      <label for="title" class="block mb-2 text-sm font-medium text-gray-300">Document Title</label>
+      <input type="text" id="title" formControlName="title" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" placeholder="e.g., Q4 Marketing Proposal" required>
+    </div>
+    <div class="mb-6">
+      <label for="binder" class="block mb-2 text-sm font-medium text-gray-300">Assign to Binder (Optional)</label>
+      <select id="binder" formControlName="binderId" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+        <option [ngValue]="null">No Binder</option>
+        <option *ngFor="let binder of hierarchicalBinders" [ngValue]="binder.id">{{ binder.displayName }}</option>
+      </select>
+    </div>
+    <div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-6"><p><strong>Error:</strong> {{ error }}</p></div>
+    <div class="flex justify-end">
+      <button type="submit" [disabled]="documentForm.invalid || isSaving" class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center w-40">
+        <span *ngIf="!isSaving">Create and Edit</span>
+        <span *ngIf="isSaving">Creating...</span>
+      </button>
+    </div>
+  </form>
+</div>

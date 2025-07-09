@@ -1,0 +1,53 @@
+<div *ngIf="isLoading" class="text-center text-gray-400"><p>Loading binder details...</p></div>
+<div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
+
+<div *ngIf="binder && !isLoading" class="text-white">
+  <header class="mb-10 flex justify-between items-center">
+    <div>
+      <h2 class="text-4xl font-extrabold">{{ binder.name }}</h2>
+      <p class="text-gray-400">Contents of this binder.</p>
+    </div>
+    <button (click)="createSubBinder()" class="px-5 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 transition-colors duration-200">
+      Create New Binder
+    </button>
+  </header>
+
+  <!-- Sub-Binders Section -->
+  <div class="mb-8">
+    <h3 class="text-2xl font-bold mb-4">Sub-Binders</h3>
+    <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+      <div class="space-y-3">
+        <a *ngFor="let subBinder of subBinders" [routerLink]="['/binders', subBinder.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
+          <p class="font-semibold text-white">{{ subBinder.name }}</p>
+          <p class="text-sm text-gray-400">Created: {{ subBinder.dateCreated | date:'mediumDate' }}</p>
+        </a>
+        <div *ngIf="subBinders.length === 0" class="text-gray-500 text-center py-4">No sub-binders found.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documents Section -->
+  <div>
+    <h3 class="text-2xl font-bold mb-4">Documents</h3>
+    <div class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+      <div class="space-y-3">
+        <a *ngFor="let doc of documents" [routerLink]="['/documents', doc.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
+          <div class="flex justify-between items-center">
+            <p class="font-semibold text-white">{{ doc.title }}</p>
+            <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                  [ngClass]="{
+                    'bg-blue-900 text-blue-300': doc.status === 'Draft',
+                    'bg-yellow-900 text-yellow-300': doc.status === 'In Review',
+                    'bg-green-900 text-green-300': doc.status === 'Final',
+                    'bg-gray-600 text-gray-300': doc.status === 'Archived'
+                  }">
+              {{ doc.status }}
+            </span>
+          </div>
+          <p class="text-sm text-gray-400">Last Modified: {{ doc.lastModified | date:'medium' }}</p>
+        </a>
+        <div *ngIf="documents.length === 0" class="text-gray-500 text-center py-4">This binder is empty.</div>
+      </div>
+    </div>
+  </div>
+</div>

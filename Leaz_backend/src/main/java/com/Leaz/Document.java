@@ -16,6 +16,10 @@ public class Document {
     private LocalDateTime lastModified;
     private Long binderId; // Can be null if the document is not in a binder
 
+    public Document() {
+        // This empty constructor is required by Spring for data binding.
+    }
+
     // A full constructor for creating new documents for our mock data
     public Document(long id, String title, String content, int version, String status, Long binderId) {
         this.id = id;
