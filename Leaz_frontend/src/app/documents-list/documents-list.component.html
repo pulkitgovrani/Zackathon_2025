@@ -1,25 +1,37 @@
 <header class="mb-10">
-  <h2 class="text-4xl font-extrabold text-white">All Documents</h2>
-  <p class="text-gray-400">A complete list of all documents in the system.</p>
+  <h2 class="text-4xl font-extrabold text-gray-900">All Documents</h2>
+  <p class="text-gray-500">A complete list of all documents in the system.</p>
 </header>
-<div *ngIf="isLoading" class="text-center text-gray-400"><p>Loading documents...</p></div>
-<div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
-<div *ngIf="!isLoading && !error" class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-  <div class="space-y-3">
-    <a *ngFor="let doc of documents" [routerLink]="['/documents', doc.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
-      <div class="flex justify-between items-center">
-        <p class="font-semibold text-white">{{ doc.title }}</p>
-        <span class="px-2 py-1 text-xs font-semibold rounded-full"
-              [ngClass]="{
-                'bg-blue-900 text-blue-300': doc.status === 'Draft',
-                'bg-yellow-900 text-yellow-300': doc.status === 'In Review',
-                'bg-green-900 text-green-300': doc.status === 'Final',
-                'bg-gray-600 text-gray-300': doc.status === 'Archived'
-              }">
-          {{ doc.status }}
-        </span>
-      </div>
-      <p class="text-sm text-gray-400">Last Modified: {{ doc.lastModified | date:'medium' }}</p>
-    </a>
-    <div *ngIf="documents.length === 0" class="text-gray-500 text-center py-4">No documents found.</div>
-  </div>
+<div *ngIf="isLoading" class="text-center text-gray-500"><p>Loading documents...</p></div>
+<div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
+<div *ngIf="!isLoading && !error" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+  <table class="w-full text-sm text-left text-gray-600">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">Title</th>
+        <th scope="col" class="px-6 py-3">Status</th>
+        <th scope="col" class="px-6 py-3">Last Modified</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let doc of documents" [routerLink]="['/documents', doc.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ doc.title }}</th>
+        <td class="px-6 py-4">
+          <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                [ngClass]="{
+                  'bg-blue-100 text-blue-800': doc.status === 'Draft',
+                  'bg-yellow-100 text-yellow-800': doc.status === 'In Review',
+                  'bg-green-100 text-green-800': doc.status === 'Final',
+                  'bg-gray-200 text-gray-800': doc.status === 'Archived'
+                }">
+            {{ doc.status }}
+          </span>
+        </td>
+        <td class="px-6 py-4">{{ doc.lastModified | date:'medium' }}</td>
+      </tr>
+      <tr *ngIf="documents.length === 0">
+        <td colspan="3" class="text-center text-gray-500 py-8">No documents found.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

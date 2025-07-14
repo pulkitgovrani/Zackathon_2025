@@ -1,20 +1,30 @@
 <header class="mb-10 flex justify-between items-center">
   <div>
-    <h2 class="text-4xl font-extrabold text-white">All Binders</h2>
-    <p class="text-gray-400">A complete list of all top-level document binders.</p>
+    <h2 class="text-4xl font-extrabold text-gray-900">All Binders</h2>
+    <p class="text-gray-500">A complete list of all top-level document binders.</p>
   </div>
-  <button (click)="createBinder()" class="px-5 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 transition-colors duration-200">
+  <button (click)="createBinder()" class="px-5 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors duration-200">
     Create New Binder
   </button>
 </header>
-<div *ngIf="isLoading" class="text-center text-gray-400"><p>Loading binders...</p></div>
-<div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
-<div *ngIf="!isLoading && !error" class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-  <div class="space-y-3">
-    <a *ngFor="let binder of binders" [routerLink]="['/binders', binder.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
-      <p class="font-semibold text-white">{{ binder.name }}</p>
-      <p class="text-sm text-gray-400">Created: {{ binder.dateCreated | date:'mediumDate' }}</p>
-    </a>
-    <div *ngIf="binders.length === 0" class="text-gray-500 text-center py-4">No binders found.</div>
-  </div>
+<div *ngIf="isLoading" class="text-center text-gray-500"><p>Loading binders...</p></div>
+<div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
+<div *ngIf="!isLoading && !error" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+  <table class="w-full text-sm text-left text-gray-600">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">Binder Name</th>
+        <th scope="col" class="px-6 py-3">Date Created</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let binder of binders" [routerLink]="['/binders', binder.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
+        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ binder.name }}</th>
+        <td class="px-6 py-4">{{ binder.dateCreated | date:'mediumDate' }}</td>
+      </tr>
+      <tr *ngIf="binders.length === 0">
+        <td colspan="2" class="text-center text-gray-500 py-8">No binders found.</td>
+      </tr>
+    </tbody>
+  </table>
 </div>

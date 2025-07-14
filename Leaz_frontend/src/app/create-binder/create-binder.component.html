@@ -1,18 +1,16 @@
 <header class="mb-10">
-  <h2 class="text-4xl font-extrabold text-white">Create New Binder</h2>
-  <p class="text-gray-400">Give your new binder a name.</p>
+  <h2 class="text-4xl font-extrabold text-gray-900">Create New Binder</h2>
+  <p class="text-gray-500">Give your new binder a name.</p>
 </header>
-<div class="bg-gray-800/50 p-8 rounded-xl border border-gray-700 max-w-2xl mx-auto">
+<div class="bg-white p-8 rounded-xl border border-gray-200 max-w-2xl mx-auto">
   <form [formGroup]="binderForm" (ngSubmit)="onSubmit()">
     <div class="mb-6">
-      <label for="name" class="block mb-2 text-sm font-medium text-gray-300">Binder Name</label>
-      <input type="text" id="name" formControlName="name" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" placeholder="e.g., 2025 Financials" required>
+      <label for="name" class="block mb-2 text-sm font-medium text-gray-700">Binder Name</label>
+      <input type="text" id="name" formControlName="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" placeholder="e.g., 2025 Financials" required>
     </div>
-    <div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-6">
-      <p><strong>Error:</strong> {{ error }}</p>
-    </div>
+    <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6"><p><strong>Error:</strong> {{ error }}</p></div>
     <div class="flex justify-end">
-      <button type="submit" [disabled]="binderForm.invalid || isSaving" class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-500 disabled:bg-indigo-800 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center w-36">
+      <button type="submit" [disabled]="binderForm.invalid || isSaving" class="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center w-36">
         <span *ngIf="!isSaving">Create Binder</span>
         <span *ngIf="isSaving">Creating...</span>
       </button>

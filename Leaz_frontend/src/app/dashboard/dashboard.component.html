@@ -1,28 +1,68 @@
 <header class="mb-10">
-  <h2 class="text-4xl font-extrabold text-white">Dashboard</h2>
-  <p class="text-gray-400">A quick overview of your recent activity.</p>
+  <h2 class="text-4xl font-extrabold text-gray-900">Dashboard</h2>
+  <p class="text-gray-500">A quick overview of your recent activity.</p>
 </header>
-<div *ngIf="isLoading" class="text-center text-gray-400"><p>Loading dashboard...</p></div>
-<div *ngIf="error" class="bg-red-900/50 border border-red-700 text-red-300 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
-<div *ngIf="!isLoading && !error" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-  <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-    <h3 class="text-2xl font-bold text-white mb-4">Recent Documents</h3>
-    <div class="space-y-3">
-      <a *ngFor="let doc of recentDocuments" [routerLink]="['/documents', doc.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
-        <p class="font-semibold text-white">{{ doc.title }}</p>
-        <p class="text-sm text-gray-400">Last Modified: {{ doc.lastModified | date:'medium' }}</p>
-      </a>
-      <div *ngIf="recentDocuments.length === 0" class="text-gray-500 text-center py-4">No recent documents found.</div>
+<div *ngIf="isLoading" class="text-center text-gray-500"><p>Loading dashboard...</p></div>
+<div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
+
+<div *ngIf="!isLoading && !error" class="space-y-12">
+  <!-- Recent Documents Table -->
+  <section>
+    <h3 class="text-2xl font-bold text-gray-900 mb-4">Recent Documents</h3>
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <table class="w-full text-sm text-left text-gray-600">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3">Title</th>
+            <th scope="col" class="px-6 py-3">Status</th>
+            <th scope="col" class="px-6 py-3">Last Modified</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let doc of recentDocuments" [routerLink]="['/documents', doc.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ doc.title }}</th>
+            <td class="px-6 py-4">
+              <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                    [ngClass]="{
+                      'bg-blue-100 text-blue-800': doc.status === 'Draft',
+                      'bg-yellow-100 text-yellow-800': doc.status === 'In Review',
+                      'bg-green-100 text-green-800': doc.status === 'Final',
+                      'bg-gray-200 text-gray-800': doc.status === 'Archived'
+                    }">
+                {{ doc.status }}
+              </span>
+            </td>
+            <td class="px-6 py-4">{{ doc.lastModified | date:'medium' }}</td>
+          </tr>
+          <tr *ngIf="recentDocuments.length === 0">
+            <td colspan="3" class="text-center text-gray-500 py-8">No recent documents found.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
-  <section class="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-    <h3 class="text-2xl font-bold text-white mb-4">Recent Binders</h3>
-    <div class="space-y-3">
-      <a *ngFor="let binder of recentBinders" [routerLink]="['/binders', binder.id]" class="block bg-gray-700/50 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">
-        <p class="font-semibold text-white">{{ binder.name }}</p>
-        <p class="text-sm text-gray-400">Created: {{ binder.dateCreated | date:'mediumDate' }}</p>
-      </a>
-      <div *ngIf="recentBinders.length === 0" class="text-gray-500 text-center py-4">No recent binders found.</div>
+
+  <!-- Recent Binders Table -->
+  <section>
+    <h3 class="text-2xl font-bold text-gray-900 mb-4">Recent Binders</h3>
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <table class="w-full text-sm text-left text-gray-600">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th scope="col" class="px-6 py-3">Binder Name</th>
+            <th scope="col" class="px-6 py-3">Date Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let binder of recentBinders" [routerLink]="['/binders', binder.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
+            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ binder.name }}</th>
+            <td class="px-6 py-4">{{ binder.dateCreated | date:'mediumDate' }}</td>
+          </tr>
+           <tr *ngIf="recentBinders.length === 0">
+            <td colspan="2" class="text-center text-gray-500 py-8">No recent binders found.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 </div>
