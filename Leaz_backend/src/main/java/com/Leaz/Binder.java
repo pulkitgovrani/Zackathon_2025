@@ -1,31 +1,39 @@
 package com.Leaz;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
  * Represents a 'binder' which acts as a folder for documents.
- * This class corresponds to the `binders` table in the database.
+ * This class is a JPA entity that maps to the `binders` table in the database.
  */
+@Entity
+@Table(name = "binders")
 public class Binder {
-    private long id;
-    private String name;
-    private LocalDateTime dateCreated;
-    private Long parentId; // NEW: To support nested binders
 
-    // Default constructor for JSON deserialization
+    /** The unique identifier for the binder. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /** The name of the binder, which cannot be null. */
+    @Column(nullable = false)
+    private String name;
+
+    /** The timestamp when the binder was created. This is not updatable. */
+    @Column(name = "date_created", updatable = false)
+    private LocalDateTime dateCreated = LocalDateTime.now();
+
+    /** The ID of the parent binder, if this is a sub-binder. Null for top-level binders. */
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    // Default constructor for JPA
     public Binder() {}
 
-    // A simple constructor for our mock data
-    public Binder(long id, String name, Long parentId) {
-        this.id = id;
-        this.name = name;
-        this.parentId = parentId;
-        this.dateCreated = LocalDateTime.now();
-    }
-
     // Getters and Setters
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public LocalDateTime getDateCreated() { return dateCreated; }

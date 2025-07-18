@@ -40,9 +40,6 @@ CREATE TABLE `documents` (
     -- Using LONGTEXT allows for very large documents.
     `content` LONGTEXT,
 
-    -- `version`: An integer to track document versions (e.g., 1, 2, 3).
-    `version` INT NOT NULL DEFAULT 1,
-
     -- `date_created`: Automatically records when the document was first created.
     `date_created` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -62,23 +59,6 @@ CREATE TABLE `documents` (
     -- will not be deleted, just un-assigned from the binder.
     FOREIGN KEY (`binder_id`) REFERENCES `binders`(`id`) ON DELETE SET NULL
 );
-
-
--- =====================================================================
--- Insert Sample Data
--- =====================================================================
-
--- Create two sample binders.
-INSERT INTO `binders` (id, name) VALUES
-(1, 'Q3 Client Contracts'),
-(2, 'Internal Policies');
-
--- Create some sample documents.
-INSERT INTO `documents` (title, content, status, binder_id) VALUES
-('Project Proposal V1', 'This is the first draft of the project proposal...', 'In Review', 1),
-('Meeting Notes Q2', 'Discussion points from the Q2 stakeholder meeting...', 'Final', 1),
-('Annual Report 2024', 'Initial draft of the 2024 annual report...', 'Draft', 2),
-('Onboarding Checklist', 'Checklist for new employee onboarding...', 'Final', NULL);
 
 
 -- =====================================================================

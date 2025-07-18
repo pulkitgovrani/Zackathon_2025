@@ -9,22 +9,46 @@
 </header>
 <div *ngIf="isLoading" class="text-center text-gray-500"><p>Loading binders...</p></div>
 <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg"><p><strong>Error:</strong> {{ error }}</p></div>
-<div *ngIf="!isLoading && !error" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+
+<div *ngIf="!isLoading && !error" class="bg-white rounded-xl border border-gray-200">
   <table class="w-full text-sm text-left text-gray-600">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr>
         <th scope="col" class="px-6 py-3">Binder Name</th>
         <th scope="col" class="px-6 py-3">Date Created</th>
+        <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let binder of binders" [routerLink]="['/binders', binder.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
-        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ binder.name }}</th>
+      <tr *ngFor="let binder of binders" class="border-b border-gray-200 hover:bg-gray-50">
+        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+          <a [routerLink]="['/binders', binder.id]" class="hover:underline">{{ binder.name }}</a>
+        </td>
         <td class="px-6 py-4">{{ binder.dateCreated | date:'mediumDate' }}</td>
+        <td class="px-6 py-4 text-right">
+          <app-action-menu itemType="binder" [item]="binder" 
+            (delete)="onDelete(binder)" 
+            (move)="onMove(binder)">
+          </app-action-menu>
+        </td>
       </tr>
       <tr *ngIf="binders.length === 0">
-        <td colspan="2" class="text-center text-gray-500 py-8">No binders found.</td>
+        <td colspan="3" class="text-center text-gray-500 py-8">No binders found.</td>
       </tr>
     </tbody>
   </table>
 </div>
+
+<app-confirmation-modal *ngIf="showDeleteModal" 
+  itemType="binder"
+  (confirm)="confirmDelete()" 
+  (cancel)="closeModals()">
+</app-confirmation-modal>
+
+<app-move-item-modal *ngIf="showMoveModal"
+  itemType="binder"
+  [currentItemId]="selectedBinder!.id"
+  [currentParentId]="selectedBinder!.parentId"
+  (move)="confirmMove($event)"
+  (cancel)="closeModals()">
+</app-move-item-modal>

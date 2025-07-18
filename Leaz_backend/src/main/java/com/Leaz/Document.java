@@ -1,46 +1,55 @@
 package com.Leaz;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 /**
  * Represents a 'document' with its content and metadata.
- * This class corresponds to the `documents` table in the database.
+ * This class is a JPA entity that maps to the `documents` table in the database.
  */
+@Entity
+@Table(name = "documents")
 public class Document {
-    private long id;
+
+    /** The unique identifier for the document. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /** The title of the document. Must be unique and cannot be null. */
+    @Column(nullable = false, unique = true)
     private String title;
+
+    /** The main content of the document, stored as a large text block. */
+    @Lob 
     private String content;
-    private int version;
-    private String status;
-    private LocalDateTime dateCreated;
-    private LocalDateTime lastModified;
-    private Long binderId; // Can be null if the document is not in a binder
 
-    public Document() {
-        // This empty constructor is required by Spring for data binding.
-    }
+    /** The current status of the document (e.g., 'Draft', 'Final'). Defaults to 'Draft'. */
+    @Column(nullable = false)
+    private String status = "Draft";
 
-    // A full constructor for creating new documents for our mock data
-    public Document(long id, String title, String content, int version, String status, Long binderId) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.version = version;
-        this.status = status;
-        this.binderId = binderId;
-        this.dateCreated = LocalDateTime.now();
-        this.lastModified = LocalDateTime.now();
-    }
+    /** The timestamp when the document was first created. */
+    @Column(name = "date_created", updatable = false)
+    private LocalDateTime dateCreated = LocalDateTime.now();
 
-    // Getters and Setters for all fields
-    public long getId() { return id; }
-    public void setId(long id) { this.id = id; }
+    /** The timestamp when the document was last modified. */
+    @Column(name = "last_modified")
+    private LocalDateTime lastModified = LocalDateTime.now();
+
+    /** The ID of the binder this document belongs to. Can be null. */
+    @Column(name = "binder_id")
+    private Long binderId;
+
+    // Default constructor for JPA
+    public Document() {}
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
-    public int getVersion() { return version; }
-    public void setVersion(int version) { this.version = version; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     public LocalDateTime getDateCreated() { return dateCreated; }

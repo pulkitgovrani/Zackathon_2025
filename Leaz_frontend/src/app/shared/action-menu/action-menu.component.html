@@ -1,0 +1,13 @@
+<div class="relative">
+  <button (click)="toggleMenu($event)" class="p-2 text-gray-500 rounded-full hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" /></svg>
+  </button>
+  <div *ngIf="isOpen" (click)="$event.stopPropagation()" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 border border-gray-200">
+    <div class="py-1">
+      <a (click)="move.emit(); isOpen = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Move</a>
+      <a *ngIf="itemType === 'document'" (click)="copy.emit(); isOpen = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Copy</a>
+      <a *ngIf="itemType === 'document'" (click)="markAsFinal.emit(); isOpen = false" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Mark as Final</a>
+      <a (click)="delete.emit(); isOpen = false" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer">Delete</a>
+    </div>
+  </div>
+</div>

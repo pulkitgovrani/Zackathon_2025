@@ -12,45 +12,50 @@
     </button>
   </header>
 
-  <!-- Sub-Binders Section -->
   <div class="mb-8">
     <h3 class="text-2xl font-bold text-gray-900 mb-4">Sub-Binders</h3>
-    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-xl border border-gray-200">
       <table class="w-full text-sm text-left text-gray-600">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
             <th scope="col" class="px-6 py-3">Binder Name</th>
             <th scope="col" class="px-6 py-3">Date Created</th>
+            <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let subBinder of subBinders" [routerLink]="['/binders', subBinder.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
-            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ subBinder.name }}</th>
+          <tr *ngFor="let subBinder of subBinders" class="border-b border-gray-200 hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              <a [routerLink]="['/binders', subBinder.id]" class="hover:underline">{{ subBinder.name }}</a>
+            </td>
             <td class="px-6 py-4">{{ subBinder.dateCreated | date:'mediumDate' }}</td>
+            <td class="px-6 py-4 text-right">
+              <app-action-menu itemType="binder" [item]="subBinder" (delete)="onDelete(subBinder, 'binder')" (move)="onMove(subBinder, 'binder')"></app-action-menu>
+            </td>
           </tr>
-          <tr *ngIf="subBinders.length === 0">
-            <td colspan="2" class="text-center text-gray-500 py-8">No sub-binders found.</td>
-          </tr>
+          <tr *ngIf="subBinders.length === 0"><td colspan="3" class="text-center text-gray-500 py-8">No sub-binders found.</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Documents Section -->
   <div>
     <h3 class="text-2xl font-bold text-gray-900 mb-4">Documents</h3>
-    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <table class="w-full text-sm text-left text-gray-600">
+    <div class="bg-white rounded-xl border border-gray-200">
+       <table class="w-full text-sm text-left text-gray-600">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
             <th scope="col" class="px-6 py-3">Title</th>
             <th scope="col" class="px-6 py-3">Status</th>
             <th scope="col" class="px-6 py-3">Last Modified</th>
+            <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let doc of documents" [routerLink]="['/documents', doc.id]" class="border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
-            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ doc.title }}</th>
+          <tr *ngFor="let doc of documents" class="border-b border-gray-200 hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+              <a [routerLink]="['/documents', doc.id]" class="hover:underline">{{ doc.title }}</a>
+            </td>
             <td class="px-6 py-4">
               <span class="px-2 py-1 text-xs font-semibold rounded-full"
                     [ngClass]="{
@@ -63,12 +68,27 @@
               </span>
             </td>
             <td class="px-6 py-4">{{ doc.lastModified | date:'medium' }}</td>
+            <td class="px-6 py-4 text-right">
+              <app-action-menu itemType="document" [item]="doc" (delete)="onDelete(doc, 'document')" (move)="onMove(doc, 'document')" (copy)="onCopy(doc)" (markAsFinal)="onMarkAsFinal(doc)"></app-action-menu>
+            </td>
           </tr>
-          <tr *ngIf="documents.length === 0">
-            <td colspan="3" class="text-center text-gray-500 py-8">This binder is empty.</td>
-          </tr>
+          <tr *ngIf="documents.length === 0"><td colspan="4" class="text-center text-gray-500 py-8">This binder is empty.</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+<app-confirmation-modal *ngIf="showDeleteModal" 
+  [itemType]="selectedItemType"
+  (confirm)="confirmDelete()" 
+  (cancel)="closeModals()">
+</app-confirmation-modal>
+
+<app-move-item-modal *ngIf="showMoveModal"
+  [itemType]="selectedItemType"
+  [currentItemId]="modalCurrentItemId!"
+  [currentParentId]="modalCurrentParentId"
+  (move)="confirmMove($event)"
+  (cancel)="closeModals()">
+</app-move-item-modal>
