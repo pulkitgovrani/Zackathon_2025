@@ -1,20 +1,57 @@
 <div *ngIf="loading" class="loading">Loading...</div>
 <div *ngIf="!loading">
-  <div style="margin-bottom: 1.5rem">
+  <!-- Unassigned Documents at the top -->
+  <div *ngIf="unassignedDocuments.length > 0" class="unassigned-documents mb-6">
+    <h3 class="text-lg font-bold mb-2">Unassigned Documents</h3>
+    <div
+      class="documents"
+      cdkDropList
+      [cdkDropListData]="unassignedDocuments"
+      (cdkDropListDropped)="onDocumentDrop($event, null)"
+      [cdkDropListConnectedTo]="allDropListIds"
+      id="dropList-unassigned"
+      style="
+        background: #fffbe7;
+        border: 1px dashed #ffb300;
+        padding: 12px;
+        border-radius: 6px;
+      "
+    >
+      <div
+        class="document-node"
+        *ngFor="let doc of unassignedDocuments"
+        cdkDrag
+        [cdkDragData]="doc"
+      >
+        {{ doc.title }}
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="search-binder-bar"
+    style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px"
+  >
     <input
+      #searchInput
       type="text"
       placeholder="Search binders..."
       [(ngModel)]="searchTerm"
       (ngModelChange)="onSearchChange($event)"
+      (focus)="setInputBorder(searchInput, '#6366f1')"
+      (blur)="setInputBorder(searchInput, '#bdbdbd')"
       style="
-        width: 100%;
-        max-width: 400px;
-        padding: 8px 14px;
+        flex: 1;
+        padding: 10px 16px;
         border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 1em;
+        border: 1px solid #bdbdbd;
+        font-size: 1.05em;
+        background: #fafbfc;
+        transition: border 0.2s;
+        outline: none;
       "
     />
+    <span style="color: #6366f1; font-size: 1.2em">🔍</span>
   </div>
   <div class="tree-container">
     <ng-container *ngFor="let tree of filteredBinderTrees">
@@ -84,3 +121,9 @@
     </div>
   </div>
 </ng-template>
+
+<script>
+  setInputBorder(input: HTMLInputElement, color: string) {
+    input.style.borderColor = color;
+  }
+</script>

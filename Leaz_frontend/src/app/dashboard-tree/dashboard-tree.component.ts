@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // <-- Add this
-import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop'; // <-- Add this
+import { FormsModule } from '@angular/forms';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ApiService, Binder, Document } from '../api.service';
 
 interface BinderTreeNode {
@@ -50,6 +50,7 @@ export class DashboardTreeComponent implements OnInit {
       this.binderTrees = this.buildBinderTrees();
       this.filteredBinderTrees = this.binderTrees;
       this.allDropListIds = this.collectDropListIds(this.binderTrees);
+      this.allDropListIds.push('dropList-unassigned'); // <-- Add this line!
       this.loading = false;
     });
   }
@@ -62,7 +63,7 @@ export class DashboardTreeComponent implements OnInit {
         name: binder.name,
         children: [],
         documents: [],
-        collapsed: true, // <-- default collapsed
+        collapsed: true, // default collapsed
       });
     });
     // Assign children
@@ -125,19 +126,22 @@ export class DashboardTreeComponent implements OnInit {
     this.filteredBinderTrees = filterNodes(this.binderTrees);
   }
 
-  onDocumentDrop(event: CdkDragDrop<Document[]>, targetBinder: BinderTreeNode) {
-    // Auto-expand binder
-    targetBinder.collapsed = false;
-
+  onDocumentDrop(event: CdkDragDrop<Document[]>, targetBinder: BinderTreeNode | null) {
     const doc: Document = event.item.data;
     // Remove from old binder
     for (const node of this.binderTrees) {
       this.removeDocFromNode(node, doc.id);
     }
-    // Add to new binder
+    // If dropped in unassigned, set binderId to null
+    if (!targetBinder) {
+      doc.binderId = null;
+      this.apiService.updateDocumentBinder(doc.id, null).subscribe();
+      return;
+    }
+    // Otherwise, add to binder
+    targetBinder.collapsed = false;
     targetBinder.documents.push(doc);
-
-    // Update backend
+    doc.binderId = targetBinder.id;
     this.apiService.updateDocumentBinder(doc.id, targetBinder.id).subscribe();
   }
 
@@ -155,6 +159,14 @@ export class DashboardTreeComponent implements OnInit {
 
   onDropListEntered(node: BinderTreeNode) {
     node.collapsed = false;
+  }
+
+  get unassignedDocuments(): Document[] {
+    return this.allDocuments.filter(doc => doc.binderId == null);
+  }
+
+  setInputBorder(input: HTMLInputElement, color: string) {
+    input.style.borderColor = color;
   }
 }
 
