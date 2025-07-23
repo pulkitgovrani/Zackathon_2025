@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ApiService, Binder, Document } from '../api.service';
+import { Router } from '@angular/router';
 
 interface BinderTreeNode {
   id: number;
@@ -33,7 +34,7 @@ export class DashboardTreeComponent implements OnInit {
   private allDocuments: Document[] = [];
   private binderTrees: BinderTreeNode[] = [];
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit() {
     this.fetchData();
@@ -167,6 +168,10 @@ export class DashboardTreeComponent implements OnInit {
 
   setInputBorder(input: HTMLInputElement, color: string) {
     input.style.borderColor = color;
+  }
+
+  openDocument(doc: Document) {
+    this.router.navigate(['/documents', doc.id]);
   }
 }
 

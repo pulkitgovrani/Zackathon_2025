@@ -24,6 +24,22 @@
         [cdkDragData]="doc"
       >
         {{ doc.title }}
+        <button
+          (click)="openDocument(doc); $event.stopPropagation()"
+          style="
+            margin-left: 8px;
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+          "
+          title="Open Document"
+        >
+          Open
+        </button>
       </div>
     </div>
   </div>
@@ -116,14 +132,24 @@
           [cdkDragData]="doc"
         >
           {{ doc.title }}
+          <button
+            (click)="openDocument(doc); $event.stopPropagation()"
+            style="
+              margin-left: 8px;
+              background: #6366f1;
+              color: #fff;
+              border: none;
+              border-radius: 4px;
+              padding: 2px 8px;
+              font-size: 0.95em;
+              cursor: pointer;
+            "
+            title="Open Document"
+          >
+            Open
+          </button>
         </div>
       </div>
     </div>
   </div>
 </ng-template>
-
-<script>
-  setInputBorder(input: HTMLInputElement, color: string) {
-    input.style.borderColor = color;
-  }
-</script>
