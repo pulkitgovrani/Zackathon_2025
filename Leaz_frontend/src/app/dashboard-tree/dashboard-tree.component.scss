@@ -1,0 +1,103 @@
+.tree-container {
+  margin-top: 2rem;
+  padding-left: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.binder-node {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px 0 #e0e0e0;
+  border-left: 2px solid #ff9800;
+  transition: box-shadow 0.2s, background 0.2s;
+  position: relative;
+}
+.binder-node:hover {
+  box-shadow: 0 6px 24px 0 #ff980055;
+  background: #fff8f0;
+}
+
+.binder-label {
+  font-weight: bold;
+  color: #ff9800;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 1.1em;
+  background: linear-gradient(90deg, #fff3e0 60%, #ffe0b2 100%);
+  box-shadow: 0 1px 4px #ff980022;
+  transition: background 0.2s, box-shadow 0.2s;
+  display: inline-block;
+}
+.binder-label:hover,
+.binder-drop-target {
+  background: linear-gradient(90deg, #ffe0b2 60%, #fff3e0 100%) !important;
+  box-shadow: 0 0 0 3px #ff980033;
+}
+.binder-dragging {
+  opacity: 0.7;
+  box-shadow: 0 2px 8px #ff980055;
+}
+
+.children {
+  margin-left: 2.5rem;
+  margin-top: 0.5rem;
+}
+
+.documents {
+  margin-top: 1rem;
+  margin-left: 0;
+  min-height: 36px;
+  background: #f5f5fa;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 1px 4px #b39ddb22;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px dashed #b39ddb44;
+  transition: background 0.2s, border 0.2s;
+}
+.documents.cdk-drop-list-dragging,
+.document-drop-target {
+  background: #e3f2fd !important;
+  border: 1.5px solid #29b6f6;
+  box-shadow: 0 0 0 2px #29b6f633;
+}
+
+.document-node {
+  color: #673ab7;
+  background: #ede7f6;
+  border-radius: 6px;
+  padding: 6px 16px;
+  margin-bottom: 2px;
+  display: inline-block;
+  cursor: grab;
+  font-size: 1em;
+  font-weight: 500;
+  box-shadow: 0 1px 4px #b39ddb22;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+.document-node:hover,
+.document-drop-target {
+  background: #d1c4e9 !important;
+  color: #311b92;
+  box-shadow: 0 2px 8px #673ab755;
+}
+.document-dragging {
+  opacity: 0.7;
+  box-shadow: 0 2px 8px #673ab755;
+  z-index: 2;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: 2rem;
+}

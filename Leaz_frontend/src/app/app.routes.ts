@@ -1,6 +1,6 @@
 // --- src/app/app.routes.ts ---
 import { Routes } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardTreeComponent } from './dashboard-tree/dashboard-tree.component';
 import { DocumentsListComponent } from './documents-list/documents-list.component';
 import { BindersListComponent } from './binders-list/binders-list.component';
 import { DocumentDetailComponent } from './document-detail/document-detail.component';
@@ -15,9 +15,8 @@ import { CreateBinderComponent } from './create-binder/create-binder.component';
 export const routes: Routes = [
   // Redirect the root path to the dashboard by default.
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  
   // Main application pages
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'dashboard', component: DashboardTreeComponent },
   { path: 'documents', component: DocumentsListComponent },
   { path: 'binders', component: BindersListComponent },
 

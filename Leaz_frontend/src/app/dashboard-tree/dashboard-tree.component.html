@@ -1,0 +1,45 @@
+<div *ngIf="loading" class="loading">Loading...</div>
+<div *ngIf="!loading">
+  <div class="tree-container">
+    <ng-container *ngFor="let tree of binderTrees">
+      <ng-container
+        *ngTemplateOutlet="renderBinder; context: { $implicit: tree }"
+      ></ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #renderBinder let-node>
+  <div class="binder-node">
+    <div
+      class="binder-label"
+      cdkDropList
+      [cdkDropListData]="node.documents"
+      (cdkDropListDropped)="onDocumentDrop($event, node)"
+      [cdkDropListConnectedTo]="allDropListIds"
+      [id]="'dropList-label-' + node.id"
+    >
+      {{ node.name }}
+    </div>
+    <div class="children">
+      <ng-container *ngFor="let child of node.children">
+        <ng-container
+          *ngTemplateOutlet="renderBinder; context: { $implicit: child }"
+        ></ng-container>
+      </ng-container>
+      <div
+        class="documents"
+        *ngIf="node.documents && node.documents.length > 0"
+        cdkDropList
+        [cdkDropListData]="node.documents"
+        (cdkDropListDropped)="onDocumentDrop($event, node)"
+        [cdkDropListConnectedTo]="allDropListIds"
+        [id]="'dropList-' + node.id"
+      >
+        <div class="document-node" *ngFor="let doc of node.documents" cdkDrag>
+          {{ doc.title }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
