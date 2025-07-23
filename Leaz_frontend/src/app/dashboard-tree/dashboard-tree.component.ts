@@ -1,201 +1,160 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // <-- Add this
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop'; // <-- Add this
 import { ApiService, Binder, Document } from '../api.service';
 
-interface BinderTreeNode extends Binder {
+interface BinderTreeNode {
+  id: number;
+  name: string;
   children: BinderTreeNode[];
   documents: Document[];
+  collapsed: boolean;
 }
-
-import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import {
-  CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
-} from '@angular/cdk/drag-drop';
-
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard-tree',
-  templateUrl: './dashboard-tree.component.html',
-  styleUrls: ['./dashboard-tree.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    DragDropModule,
-    MatButtonModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatSnackBarModule,
+    DragDropModule
   ],
+  templateUrl: './dashboard-tree.component.html',
+  styleUrls: ['./dashboard-tree.component.scss'],
 })
 export class DashboardTreeComponent implements OnInit {
-  headBinders: Binder[] = [];
-  binderTrees: BinderTreeNode[] = [];
-  filteredBinderTrees: BinderTreeNode[] = [];
   loading = true;
+  searchTerm = '';
+  filteredBinderTrees: BinderTreeNode[] = [];
   allDropListIds: string[] = [];
-  dropListIdToBinderId: { [dropListId: string]: number } = {};
-  searchTerm: string = '';
 
-  constructor(private api: ApiService, private snackBar: MatSnackBar) {}
+  private allBinders: Binder[] = [];
+  private allDocuments: Document[] = [];
+  private binderTrees: BinderTreeNode[] = [];
+
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    this.api.getBinders().subscribe(async (binders) => {
-      this.headBinders = binders.filter((b) => b.parentId === null);
-      this.binderTrees = await Promise.all(
-        this.headBinders.map((binder) => this.buildBinderTree(binder.id))
-      );
-      this.updateAllDropListIds();
-      this.applySearch();
+    this.fetchData();
+  }
+
+  fetchData() {
+    this.loading = true;
+    Promise.all([
+      this.apiService.getAllBindersForDropdown().toPromise(),
+      this.apiService.getDocuments().toPromise(),
+    ]).then(([binders, documents]) => {
+      this.allBinders = binders || [];
+      this.allDocuments = documents || [];
+      this.binderTrees = this.buildBinderTrees();
+      this.filteredBinderTrees = this.binderTrees;
+      this.allDropListIds = this.collectDropListIds(this.binderTrees);
       this.loading = false;
     });
   }
 
-  async buildBinderTree(binderId: number): Promise<BinderTreeNode> {
-    const binder = await this.api.getBinderById(binderId).toPromise();
-    if (!binder) throw new Error('Binder not found');
-    const children = (await this.api.getBinders(binderId).toPromise()) || [];
-    const documents =
-      (await this.api.getDocumentsByBinderId(binderId).toPromise()) || [];
-    const childNodes = await Promise.all(
-      children.map((child) => this.buildBinderTree(child.id))
-    );
-    return {
-      id: binder.id,
-      name: binder.name,
-      dateCreated: binder.dateCreated,
-      parentId: binder.parentId ?? null,
-      children: childNodes,
-      documents: documents,
-    };
+  buildBinderTrees(): BinderTreeNode[] {
+    const idToNode = new Map<number, BinderTreeNode>();
+    this.allBinders.forEach((binder) => {
+      idToNode.set(binder.id, {
+        id: binder.id,
+        name: binder.name,
+        children: [],
+        documents: [],
+        collapsed: true, // <-- default collapsed
+      });
+    });
+    // Assign children
+    this.allBinders.forEach((binder) => {
+      if (binder.parentId !== null && idToNode.has(binder.parentId)) {
+        idToNode.get(binder.parentId)!.children.push(idToNode.get(binder.id)!);
+      }
+    });
+    // Assign documents
+    this.allDocuments.forEach((doc) => {
+      if (doc.binderId !== null && idToNode.has(doc.binderId)) {
+        idToNode.get(doc.binderId)!.documents.push(doc);
+      }
+    });
+    // Return root binders
+    return this.allBinders
+      .filter((binder) => binder.parentId === null)
+      .map((binder) => idToNode.get(binder.id)!);
   }
 
-  // Search logic: recursively filter tree, keeping parents of matches
-  applySearch() {
-    if (!this.searchTerm.trim()) {
-      this.filteredBinderTrees = this.binderTrees;
-      return;
+  collectDropListIds(nodes: BinderTreeNode[]): string[] {
+    let ids: string[] = [];
+    for (const node of nodes) {
+      ids.push('dropList-label-' + node.id);
+      ids.push('dropList-' + node.id);
+      ids = ids.concat(this.collectDropListIds(node.children));
     }
-    const term = this.searchTerm.trim().toLowerCase();
-    function filterTree(node: BinderTreeNode): BinderTreeNode | null {
-      const nameMatches = node.name.toLowerCase().includes(term);
-      if (nameMatches) {
-        // If this node matches, show the entire subtree (all children and documents)
-        return node;
-      }
-      // Otherwise, filter children
-      const filteredChildren: BinderTreeNode[] = [];
-      for (const child of node.children) {
-        const filteredChild = filterTree(child);
-        if (filteredChild) filteredChildren.push(filteredChild);
-      }
-      if (filteredChildren.length > 0) {
-        return {
-          ...node,
-          children: filteredChildren,
-          documents: [],
-        };
-      }
-      return null;
-    }
-    this.filteredBinderTrees = this.binderTrees
-      .map(filterTree)
-      .filter((n): n is BinderTreeNode => !!n);
+    return ids;
+  }
+
+  toggleCollapse(node: BinderTreeNode) {
+    node.collapsed = !node.collapsed;
   }
 
   onSearchChange(term: string) {
     this.searchTerm = term;
-    this.applySearch();
-    this.updateAllDropListIds();
-  }
-
-  // Helper to collect all drop list ids for cdkDropListConnectedTo
-  updateAllDropListIds() {
-    const ids: string[] = [];
-    const map: { [dropListId: string]: number } = {};
-    function collect(node: BinderTreeNode) {
-      ids.push('dropList-' + node.id);
-      map['dropList-' + node.id] = node.id;
-      ids.push('dropList-label-' + node.id);
-      map['dropList-label-' + node.id] = node.id;
-      node.children.forEach(collect);
+    if (!term) {
+      this.filteredBinderTrees = this.binderTrees;
+      return;
     }
-    this.binderTrees.forEach(collect);
-    this.allDropListIds = ids;
-    this.dropListIdToBinderId = map;
+    // Simple filter: show binders whose name matches, and their parents
+    const filterNodes = (nodes: BinderTreeNode[]): BinderTreeNode[] => {
+      return nodes
+        .map((node) => {
+          const children = filterNodes(node.children);
+          if (
+            node.name.toLowerCase().includes(term.toLowerCase()) ||
+            children.length > 0
+          ) {
+            return {
+              ...node,
+              children,
+              collapsed: false,
+            };
+          }
+          return null;
+        })
+        .filter(Boolean) as BinderTreeNode[];
+    };
+    this.filteredBinderTrees = filterNodes(this.binderTrees);
   }
 
-  // Drag & drop for documents between any binders
   onDocumentDrop(event: CdkDragDrop<Document[]>, targetBinder: BinderTreeNode) {
-    const prevContainer = event.previousContainer;
-    const currContainer = event.container;
-    const sourceBinderId = this.dropListIdToBinderId[prevContainer.id];
-    const destBinderId = this.dropListIdToBinderId[currContainer.id];
-    console.log('onDocumentDrop called', { event, targetBinder });
-    console.log(
-      'prevContainer.id:',
-      prevContainer.id,
-      'currContainer.id:',
-      currContainer.id
-    );
-    console.log(
-      'Source binder id:',
-      sourceBinderId,
-      'Destination binder id:',
-      destBinderId
-    );
-    if (prevContainer === currContainer) {
-      moveItemInArray(
-        currContainer.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-    } else {
-      const doc = prevContainer.data[event.previousIndex];
-      console.log(
-        'Moving document',
-        doc.id,
-        'from binder',
-        sourceBinderId,
-        'to binder',
-        destBinderId
-      );
-      transferArrayItem(
-        prevContainer.data,
-        currContainer.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      // Call API to update document's binder
-      this.api.updateDocumentBinder(doc.id, destBinderId).subscribe({
-        next: () => {
-          this.snackBar.open('Document moved!', '', { duration: 1500 });
-          // Refresh the tree after move
-          this.api.getBinders().subscribe(async (binders) => {
-            this.headBinders = binders.filter((b) => b.parentId === null);
-            this.binderTrees = await Promise.all(
-              this.headBinders.map((binder) => this.buildBinderTree(binder.id))
-            );
-            this.updateAllDropListIds();
-          });
-        },
-        error: () => {
-          this.snackBar.open('Failed to move document', '', { duration: 2000 });
-        },
-      });
+    // Auto-expand binder
+    targetBinder.collapsed = false;
+
+    const doc: Document = event.item.data;
+    // Remove from old binder
+    for (const node of this.binderTrees) {
+      this.removeDocFromNode(node, doc.id);
     }
+    // Add to new binder
+    targetBinder.documents.push(doc);
+
+    // Update backend
+    this.apiService.updateDocumentBinder(doc.id, targetBinder.id).subscribe();
   }
 
-  getAllDropListIds(): string[] {
-    return this.allDropListIds;
+  removeDocFromNode(node: BinderTreeNode, docId: number): boolean {
+    const idx = node.documents.findIndex((d) => d.id === docId);
+    if (idx !== -1) {
+      node.documents.splice(idx, 1);
+      return true;
+    }
+    for (const child of node.children) {
+      if (this.removeDocFromNode(child, docId)) return true;
+    }
+    return false;
+  }
+
+  onDropListEntered(node: BinderTreeNode) {
+    node.collapsed = false;
   }
 }
 

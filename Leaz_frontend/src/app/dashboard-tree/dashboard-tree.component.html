@@ -30,13 +30,32 @@
     <div
       class="binder-label"
       cdkDropList
-      [cdkDropListData]="node.documents"
+      [cdkDropListData]="node.documents || []"
       (cdkDropListDropped)="onDocumentDrop($event, node)"
+      (cdkDropListEntered)="onDropListEntered(node)"
       [cdkDropListConnectedTo]="allDropListIds"
       [id]="'dropList-label-' + node.id"
     >
+      <button
+        (click)="toggleCollapse(node)"
+        style="
+          margin-right: 6px;
+          background: none;
+          border: none;
+          cursor: pointer;
+        "
+        *ngIf="
+          node.children.length > 0 ||
+          (node.documents && node.documents.length > 0)
+        "
+        aria-label="Toggle collapse"
+      >
+        <span *ngIf="node.collapsed">▶</span>
+        <span *ngIf="!node.collapsed">▼</span>
+      </button>
       {{ node.name }}
     </div>
+    <!-- Always render children container so drop lists exist in DOM -->
     <div class="children">
       <ng-container *ngFor="let child of node.children">
         <ng-container
@@ -45,14 +64,20 @@
       </ng-container>
       <div
         class="documents"
-        *ngIf="node.documents && node.documents.length > 0"
+        *ngIf="node.documents && node.documents.length > 0 && !node.collapsed"
         cdkDropList
-        [cdkDropListData]="node.documents"
+        [cdkDropListData]="node.documents || []"
         (cdkDropListDropped)="onDocumentDrop($event, node)"
+        (cdkDropListEntered)="onDropListEntered(node)"
         [cdkDropListConnectedTo]="allDropListIds"
         [id]="'dropList-' + node.id"
       >
-        <div class="document-node" *ngFor="let doc of node.documents" cdkDrag>
+        <div
+          class="document-node"
+          *ngFor="let doc of node.documents"
+          cdkDrag
+          [cdkDragData]="doc"
+        >
           {{ doc.title }}
         </div>
       </div>
