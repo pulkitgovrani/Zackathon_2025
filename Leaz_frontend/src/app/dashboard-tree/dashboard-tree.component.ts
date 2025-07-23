@@ -39,9 +39,11 @@ import { FormsModule } from '@angular/forms';
 export class DashboardTreeComponent implements OnInit {
   headBinders: Binder[] = [];
   binderTrees: BinderTreeNode[] = [];
+  filteredBinderTrees: BinderTreeNode[] = [];
   loading = true;
   allDropListIds: string[] = [];
   dropListIdToBinderId: { [dropListId: string]: number } = {};
+  searchTerm: string = '';
 
   constructor(private api: ApiService, private snackBar: MatSnackBar) {}
 
@@ -52,6 +54,7 @@ export class DashboardTreeComponent implements OnInit {
         this.headBinders.map((binder) => this.buildBinderTree(binder.id))
       );
       this.updateAllDropListIds();
+      this.applySearch();
       this.loading = false;
     });
   }
@@ -73,6 +76,45 @@ export class DashboardTreeComponent implements OnInit {
       children: childNodes,
       documents: documents,
     };
+  }
+
+  // Search logic: recursively filter tree, keeping parents of matches
+  applySearch() {
+    if (!this.searchTerm.trim()) {
+      this.filteredBinderTrees = this.binderTrees;
+      return;
+    }
+    const term = this.searchTerm.trim().toLowerCase();
+    function filterTree(node: BinderTreeNode): BinderTreeNode | null {
+      const nameMatches = node.name.toLowerCase().includes(term);
+      if (nameMatches) {
+        // If this node matches, show the entire subtree (all children and documents)
+        return node;
+      }
+      // Otherwise, filter children
+      const filteredChildren: BinderTreeNode[] = [];
+      for (const child of node.children) {
+        const filteredChild = filterTree(child);
+        if (filteredChild) filteredChildren.push(filteredChild);
+      }
+      if (filteredChildren.length > 0) {
+        return {
+          ...node,
+          children: filteredChildren,
+          documents: [],
+        };
+      }
+      return null;
+    }
+    this.filteredBinderTrees = this.binderTrees
+      .map(filterTree)
+      .filter((n): n is BinderTreeNode => !!n);
+  }
+
+  onSearchChange(term: string) {
+    this.searchTerm = term;
+    this.applySearch();
+    this.updateAllDropListIds();
   }
 
   // Helper to collect all drop list ids for cdkDropListConnectedTo
@@ -156,3 +198,4 @@ export class DashboardTreeComponent implements OnInit {
     return this.allDropListIds;
   }
 }
+
