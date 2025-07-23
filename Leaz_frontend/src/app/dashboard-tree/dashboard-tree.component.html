@@ -1,7 +1,23 @@
 <div *ngIf="loading" class="loading">Loading...</div>
 <div *ngIf="!loading">
+  <div style="margin-bottom: 1.5rem">
+    <input
+      type="text"
+      placeholder="Search binders..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchChange($event)"
+      style="
+        width: 100%;
+        max-width: 400px;
+        padding: 8px 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 1em;
+      "
+    />
+  </div>
   <div class="tree-container">
-    <ng-container *ngFor="let tree of binderTrees">
+    <ng-container *ngFor="let tree of filteredBinderTrees">
       <ng-container
         *ngTemplateOutlet="renderBinder; context: { $implicit: tree }"
       ></ng-container>
