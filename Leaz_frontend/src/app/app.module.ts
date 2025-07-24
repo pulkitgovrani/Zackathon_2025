@@ -18,6 +18,8 @@ import { BinderDetailComponent } from './binder-detail/binder-detail.component';
 import { CreateDocumentComponent } from './create-document/create-document.component';
 import { CreateBinderComponent } from './create-binder/create-binder.component';
 import { routes } from './app.routes';
+import { DashboardVisualTreeComponent } from './dashboard-visual-tree/dashboard-visual-tree.component';
+import { VisualTreeNodeComponent } from './dashboard-visual-tree/visual-tree-node.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +31,8 @@ import { routes } from './app.routes';
     BinderDetailComponent,
     CreateDocumentComponent,
     CreateBinderComponent,
+    DashboardVisualTreeComponent,
+    VisualTreeNodeComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
