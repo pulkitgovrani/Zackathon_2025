@@ -69,12 +69,54 @@
     />
     <span style="color: #6366f1; font-size: 1.2em">🔍</span>
   </div>
-  <div class="tree-container">
-    <ng-container *ngFor="let tree of filteredBinderTrees">
-      <ng-container
-        *ngTemplateOutlet="renderBinder; context: { $implicit: tree }"
-      ></ng-container>
-    </ng-container>
+
+  <div style="display: flex; gap: 12px; margin-bottom: 1.5rem">
+    <button
+      (click)="setTab('list')"
+      [style.background]="tab === 'list' ? '#6366f1' : '#f3f4f6'"
+      [style.color]="tab === 'list' ? '#fff' : '#222'"
+      style="
+        padding: 8px 18px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+      "
+    >
+      List View
+    </button>
+    <button
+      (click)="setTab('tree')"
+      [style.background]="tab === 'tree' ? '#6366f1' : '#f3f4f6'"
+      [style.color]="tab === 'tree' ? '#fff' : '#222'"
+      style="
+        padding: 8px 18px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+      "
+    >
+      Tree View
+    </button>
+  </div>
+
+  <div *ngIf="tab === 'list'">
+    <div class="tree-container">
+      <ng-container *ngFor="let tree of filteredBinderTrees">
+        <ng-container
+          *ngTemplateOutlet="renderBinder; context: { $implicit: tree }"
+        ></ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Show this in your "tree" tab -->
+  <div *ngIf="tab === 'tree'">
+    <app-dashboard-visual-tree
+      [binderTrees]="binderTrees"
+      [unassignedDocuments]="unassignedDocuments"
+    ></app-dashboard-visual-tree>
   </div>
 </div>
 

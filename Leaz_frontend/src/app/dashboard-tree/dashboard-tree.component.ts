@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { ApiService, Binder, Document } from '../api.service';
 import { Router } from '@angular/router';
+import { DashboardVisualTreeComponent } from '../dashboard-visual-tree/dashboard-visual-tree.component';
 
 interface BinderTreeNode {
   id: number;
@@ -19,7 +20,8 @@ interface BinderTreeNode {
   imports: [
     CommonModule,
     FormsModule,
-    DragDropModule
+    DragDropModule,
+    DashboardVisualTreeComponent, // <-- Add this line
   ],
   templateUrl: './dashboard-tree.component.html',
   styleUrls: ['./dashboard-tree.component.scss'],
@@ -29,10 +31,11 @@ export class DashboardTreeComponent implements OnInit {
   searchTerm = '';
   filteredBinderTrees: BinderTreeNode[] = [];
   allDropListIds: string[] = [];
+  tab: 'list' | 'tree' = 'list';
 
   private allBinders: Binder[] = [];
   private allDocuments: Document[] = [];
-  private binderTrees: BinderTreeNode[] = [];
+  binderTrees: BinderTreeNode[] = [];
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -172,6 +175,10 @@ export class DashboardTreeComponent implements OnInit {
 
   openDocument(doc: Document) {
     this.router.navigate(['/documents', doc.id]);
+  }
+
+  setTab(tab: 'list' | 'tree') {
+    this.tab = tab;
   }
 }
 

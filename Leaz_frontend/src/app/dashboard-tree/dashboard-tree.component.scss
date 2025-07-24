@@ -101,3 +101,20 @@
   font-size: 1.2em;
   margin-top: 2rem;
 }
+
+.tree-root,
+.tree-root ul {
+  list-style: none;
+  padding-left: 1.2em;
+}
+.tree-leaf {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tree-leaf span {
+  flex: 1;
+}
+li > span {
+  font-weight: 500;
+}
