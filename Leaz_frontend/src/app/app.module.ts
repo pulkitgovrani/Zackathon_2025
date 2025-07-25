@@ -20,6 +20,8 @@ import { CreateBinderComponent } from './create-binder/create-binder.component';
 import { routes } from './app.routes';
 import { DashboardVisualTreeComponent } from './dashboard-visual-tree/dashboard-visual-tree.component';
 import { VisualTreeNodeComponent } from './dashboard-visual-tree/visual-tree-node.component';
+import { AiChatComponent } from './ai-chat/ai-chat.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -33,9 +35,11 @@ import { VisualTreeNodeComponent } from './dashboard-visual-tree/visual-tree-nod
     CreateBinderComponent,
     DashboardVisualTreeComponent,
     VisualTreeNodeComponent,
+    AiChatComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
+    RouterModule.forRoot(routes),
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -44,7 +48,7 @@ import { VisualTreeNodeComponent } from './dashboard-visual-tree/visual-tree-nod
     MatButtonModule,
     MatTooltipModule,
     DragDropModule,
-    RouterModule.forRoot(routes),
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

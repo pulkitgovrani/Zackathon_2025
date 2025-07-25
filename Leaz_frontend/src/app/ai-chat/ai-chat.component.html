@@ -1,0 +1,20 @@
+<div class="ai-chat">
+  <div class="messages">
+    <div *ngFor="let msg of messages" [ngClass]="msg.role">
+      <span>{{ msg.role === "user" ? "You" : "AI" }}:</span> {{ msg.content }}
+    </div>
+    <div *ngIf="loading" class="loading">AI is thinking...</div>
+  </div>
+  <form (ngSubmit)="sendMessage()" class="input-row">
+    <input
+      [(ngModel)]="userInput"
+      name="userInput"
+      placeholder="Ask the AI assistant..."
+      [disabled]="loading"
+      required
+    />
+    <button type="submit" [disabled]="loading || !userInput.trim()">
+      Send
+    </button>
+  </form>
+</div>
