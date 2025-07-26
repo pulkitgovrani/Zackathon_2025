@@ -1,6 +1,6 @@
 // --- src/app/app.component.ts ---
 import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router } from '@angular/router';
 
 /**
  * The root component of the application. It acts as the main shell,
@@ -8,10 +8,8 @@ import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/rou
  */
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'Leaz';
